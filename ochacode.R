@@ -23,9 +23,6 @@ library(lubridate)
 library(RColorBrewer)
 library(scales)
 
-
-
-
 # Age
 hist(hcm[,c(4)])
 mean(hcm[,c(4)])
@@ -35,7 +32,6 @@ freq(hcm[,c(4)])
 hist(hcm[,c(4)])
 
 sum(hcm[,4] < 30)
-
 
 # Sex
 freq(hcm[,c(5)])
@@ -123,6 +119,32 @@ freq(hcm[,c(23)])
   summary(hcm[,c(33)])
   freq(hcm[,c(33)])
   freq(hcm[,c(32)] < 30 & hcm[,c(33)] >= 30)
+  
+  rest <- hcm[,32]
+  dynamic <- as.numeric(hcm[,33])
+  maxvelocity <- c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+  
+  
+ 
+  
+  for (i in 1:27) {
+    if (is.na(dynamic[i])) {
+      maxvelocity[i] <- rest[i]
+    } else if (dynamic[i] > rest[i]) {
+      maxvelocity[i] <- dynamic[i]
+    } else {
+      maxvelocity[i] <- rest[i]
+    }
+  }
+  rest
+  dynamic
+  maxvelocity
+  summary(maxvelocity)
+  
+  
+  lvot <- matrix(hcm[,32], hcm[,33],ncol = 2)
+  lvot
+  
   # SAM
   freq(hcm[,c(34)])
   # Mitral regurg
@@ -181,7 +203,7 @@ freq(hcm[,c(41)])
 # ICD therapy
   freq(hcm[,c(54)])
 # ICD Shock
-  freq(hcm[,c(55)]) 
+  freq(hcm[,c(55)])
 # ATP
   freq(hcm[,c(56)])
 # Time to ICD therapy
@@ -201,14 +223,13 @@ freq(hcm[,c(41)])
   deathdate <- hcm[c(18,25),64]
   deathdate <- as.Date(deathdate, format = "%m/%d/%Y" )
   deathdate
-  
+
   ohcadate<- hcm[c(18, 25),8]
   ohcadate <- as.Date(ohcadate, format = "%m/%d/%Y")
   ohcadate
 
   datediff <- (deathdate - ohcadate) / 365.25
   datediff
-  
   
 # Inappropriate shocks
   freq(hcm[,c(73)])
@@ -225,9 +246,9 @@ hcm[,8]
 a <- mdy(hcm[,8])
 a
 b <- mdy(hcm[,64])
-b  
+b
 (b - a) / 365.25
-  
+
 # Time to last f/u
   hist(hcm[,c(69)])
   shapiro.test(hcm[,c(69)])
@@ -258,7 +279,7 @@ freq(hcm[,148])
 # Beta blocker
   freq(hcm[,152])
 # Antiarrhythmic
-  freq(hcm[,153])  
+  freq(hcm[,153])
   
 # Risk factors
   # Family history
@@ -275,7 +296,6 @@ freq(hcm[,148])
   freq(hcm[,c(84)])
   # LGE on cmr
   freq(hcm[,85])
-  
 
 sum(hcm[,79])
 sum(hcm[,80])
@@ -376,7 +396,7 @@ dotcolor <- hcm$ECG..6mo.SCA.
 dotcolor
 x11()
 ggplot(data = hcm, aes(x=AI.score, fill = as.factor(ECG..6mo.SCA.))) +
-  geom_boxplot(outlier.shape = 16, outlier.size = 4, fill = "gray90", color = "black") + 
+  geom_boxplot(outlier.shape = 16, outlier.size = 4, fill = "lightblue", color = "black") + 
   geom_dotplot(stackdir = "center", binwidth = 3) +
   theme_classic() +
   coord_flip() +
@@ -394,6 +414,10 @@ ggplot(data = hcm, aes(x=AI.score, fill = as.factor(ECG..6mo.SCA.))) +
   ) +
   guides(fill = guide_legend(title = "ECG <6 months after SCA"), label = TRUE) +
   scale_fill_discrete(labels=c('No', 'Yes'), type = c("black", "white"))
+
+setwd('~/Siontis research/OHCAHCM/Letter2/')
+ggsave("Figure1_600dpi.tiff", dpi=600)
+
 
 ### Figure 2 ###
 x11()
@@ -436,6 +460,8 @@ p2 <- ggplot(data = d, aes(realrf))  +
 
 x11()
 ggpubr::ggarrange(p1, p2, nrow = 1,labels = c("", ""))
+ggsave("Figure2_600dpi.tiff", dpi=600)
+
 
 ## *** Figure 3 ***
 # Old figure - without blending of colors
@@ -507,6 +533,7 @@ ggplot() +
     axis.line.x = element_blank(),
     axis.ticks.x = element_blank()
   )
+ggsave("Figure3_600dpi.tiff", dpi=600)
 
 ### Figure 4 ###
 endpoint <- hcm[,c(70)]
